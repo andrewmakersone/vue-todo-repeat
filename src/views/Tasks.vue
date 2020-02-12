@@ -2,7 +2,7 @@
   <div>
     <AddTask @add-new-task-event="addNewTask" @filter-changed-event="selectedFilter"></AddTask>
     <Loader v-if="isLoading"></Loader>
-    <TaskList v-else-if="!isLoading && filteredTasks.length" :tasks="filteredTasks" @remove-task-event="removeTask"></TaskList>
+    <TaskList v-else-if="!isLoading && tasks.length" :tasks="tasks" @remove-task-event="removeTask"></TaskList>
     <p v-else>No tasks. Please add one!</p>
   </div>
 </template>
@@ -11,24 +11,22 @@
   import AddTask from "../components/AddTask";
   import TaskList from "../components/TaskList";
   import Loader from "../components/Loader";
+
+  import {mapGetters} from 'vuex'
+
   export default {
     name: "Tasks",
     data() {
       return {
-        tasks: [],
+        // tasks: [],
         isLoading: true,
         filter: ''
       }
     },
     mounted() {
-      fetch('https://jsonplaceholder.typicode.com/todos?_limit=5')
-        .then(response => response.json())
-        .then(json => {
-          setTimeout(() => {
-            this.tasks = json;
-            this.isLoading = false;
-          },1000);
-        })
+      setTimeout(() => {
+        this.isLoading = false;
+      }, 1000);
     },
     methods: {
       addNewTask(task) {
@@ -52,7 +50,10 @@
         } else {
           return this.tasks
         }
-      }
+      },
+      ...mapGetters({
+        tasks: 'taskList'
+      })
     },
     components: {
       AddTask, TaskList, Loader
